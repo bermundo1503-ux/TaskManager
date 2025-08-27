@@ -3,9 +3,10 @@ require_once 'conn.php';
 
 try {
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
-        $title = isset($_POST['title']) ? trim($_POST['title']) : null;
-        $description = isset($_POST['description']) ? trim($_POST['description']) : null;
-
+        $title = isset($_POST['title']) ? ($_POST['title']) : null;
+        $description= isset($_POST['description'])  ? $_POST['description']: null;
+ 
+        $sql = "INSERT INTO crud_php (title, description) VALUES (?,?)";
         if (!empty($title)) {
             $sql = "INSERT INTO crud_php (title, description) VALUES (?, ?)";
             $stmt = $conn->prepare($sql);
