@@ -16,7 +16,8 @@ try {
                 throw new Exception("Conexão com o banco de dados não está ativa");
             }
 
-            $hashedpassword = password_hash($password, PASSWORD_ARGON2I);
+            // Usa PASSWORD_DEFAULT para máxima compatibilidade
+            $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
 
             $sql = "INSERT INTO users (email, password) VALUES (?, ?)";
             $stmt = $conn->prepare($sql);
