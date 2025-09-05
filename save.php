@@ -1,12 +1,16 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
 require_once 'conn.php';
 
 try {
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
-        $title = isset($_POST['title']) ? ($_POST['title']) : null;
-        $description= isset($_POST['description'])  ? $_POST['description']: null;
- 
-        $sql = "INSERT INTO crud_php (title, description) VALUES (?,?)";
+        $title = isset($_POST['title']) ? $_POST['title'] : null;
+        $description = isset($_POST['description']) ? $_POST['description'] : null;
+
         if (!empty($title)) {
             $sql = "INSERT INTO crud_php (title, description) VALUES (?, ?)";
             $stmt = $conn->prepare($sql);
@@ -18,14 +22,16 @@ try {
             $stmt->bind_param("ss", $title, $description);
 
             if ($stmt->execute()) {
-                // Redireciona de volta para index.php após salvar
-                header("Location: index.php");
-                exit();
+                $_SESSION['message'] = "Tarefa salva com sucesso!";
+                $_SESSION['message_type'] = "success";
             } else {
-                throw new Exception("Erro ao executar a consulta: " . $stmt->error);
+                $_SESSION['message'] = "Erro ao salvar a tarefa!";
+                $_SESSION['message_type'] = "danger";
             }
 
             $stmt->close();
+            header("Location: index.php");
+            exit();
         } else {
             throw new Exception("O campo 'Título' é obrigatório!");
         }
@@ -33,7 +39,10 @@ try {
         throw new Exception("Método de requisição inválido!");
     }
 } catch (Exception $e) {
-    echo "Erro: " . $e->getMessage();
+    $_SESSION['message'] = "Erro: " . $e->getMessage();
+    $_SESSION['message_type'] = "danger";
+    header("Location: index.php");
+    exit();
 } finally {
     $conn->close();
 }

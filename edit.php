@@ -12,6 +12,9 @@ $id = isset($_GET['id']) ? intval($_GET['id']) : null;
 
 if (!$id) {
     echo "ID da tarefa não fornecido!";
+    $_SESSION['message'] = "ID da tarefa não fornecido!";
+    $_SESSION['message_type'] = "danger";
+    header("Location: index.php");
     exit();
 }
 
@@ -32,6 +35,9 @@ try {
         }
         $stmt->close();
     } else {
+        $_SESSION['message'] = "Erro ao preparar a consulta!";
+        $_SESSION['message_type'] = "danger";
+        header("Location: index.php");
         throw new Exception("Erro ao preparar a consulta: " . $conn->error);
     }
 } catch (Exception $e) {
